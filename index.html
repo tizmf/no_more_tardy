@@ -149,4 +149,34 @@
       let isFirstTrip = 0;
       let parkingWalk = 0;
       if (transport === "자가용") {
-        const firstTripVal = document.getElementById("is
+        const firstTripVal = document.getElementById("isFirstTrip").value;
+        isFirstTrip = (firstTripVal === "yes") ? 5 : 0; // 초행길이면 +5분
+        parkingWalk = parseInt(document.getElementById("parkingWalk").value) || 0; // 주차~약속장소 도보시간
+      }
+
+      // 거리 분류
+      const category = distance_category[destination];
+
+      // 기본 추가시간 (이동수단별 + 거리)
+      let additionalTime = transportTime[transport][category];
+
+      // 시간대별 추가시간
+      additionalTime += timeAdjustment[timePeriod];
+
+      // 날씨별 추가시간
+      additionalTime += weatherAdjustment[weather][transport];
+
+      // 자가용일 경우 (초행길, 주차 도보)
+      additionalTime += isFirstTrip;
+      additionalTime += parkingWalk;
+
+      // 최종 계산
+      const totalTime = baseTime + additionalTime;
+
+      // 결과 표시
+      const resultText = `네이버 지도 ${baseTime}분 + 여유시간 ${additionalTime}분 = ${totalTime}분 일찍 출발해야 함`;
+      document.getElementById("result").innerText = resultText;
+    }
+  </script>
+</body>
+</html>
