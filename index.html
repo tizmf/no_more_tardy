@@ -94,9 +94,9 @@
   <button onclick="calculateDepartureTime()">출발 시간 계산</button>
   <div id="result"></div>
 
-  <!-- 피드백 입력: 실제 오차 -->
-  <label for="actual_diff">실제 오차 (분):</label>
-  <input type="number" id="actual_diff" placeholder="예: -5 (예상보다 5분 빨리 도착)" />
+  <!-- 실제 소요시간 입력 -->
+  <label for="actual_time">실제 소요시간 (분):</label>
+  <input type="number" id="actual_time" placeholder="예: 30" />
   <button onclick="saveRecord()">기록 저장</button>
 
   <!-- 기록 테이블 -->
@@ -111,7 +111,8 @@
         <th>기본이동</th>
         <th>추가시간</th>
         <th>총합</th>
-        <th>실제오차</th>
+        <th>실제 소요시간</th>
+        <th>오차</th>
       </tr>
     </thead>
     <tbody>
@@ -207,7 +208,7 @@
 
     // 기록 저장
     function saveRecord() {
-      const actualDiff = parseInt(document.getElementById("actual_diff").value) || 0;
+      const actualTime = parseInt(document.getElementById("actual_time").value) || 0;
       const now = new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
 
       const record = {
@@ -219,7 +220,8 @@
         baseTime: parseInt(document.getElementById("base_time").value),
         additionalTime,
         totalTime: parseInt(document.getElementById("base_time").value) + additionalTime,
-        actualDiff
+        actualTime,
+        diff: actualTime - (parseInt(document.getElementById("base_time").value) + additionalTime)  // 오차 계산
       };
 
       let records = JSON.parse(localStorage.getItem("departureRecords")) || [];
@@ -228,7 +230,7 @@
 
       renderTable(records);
 
-      document.getElementById("actual_diff").value = "";
+      document.getElementById("actual_time").value = "";
     }
 
     // 테이블 렌더링
@@ -247,7 +249,8 @@
           <td>${r.baseTime}</td>
           <td>${r.additionalTime}</td>
           <td>${r.totalTime}</td>
-          <td>${r.actualDiff}</td>
+          <td>${r.actualTime}</td>
+          <td>${r.diff}</td>
         `;
         tbody.appendChild(tr);
       });
